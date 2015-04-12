@@ -1,19 +1,17 @@
 __author__ = 'www.yoelsher.com'
 
-# THIS FILE COMES WITHOUT ANY RESPONSIBILITY. USE WITH YOUR OWN RISK. 
-
 # Grab all data from xml
 #import xml.etree.ElementTree as etree
 from lxml import etree
 import csv,re
 
-inputFileName = '<INPUT XML PRODUCT FILE>.xml'
-outputFileName = '<OUTPUT CSV FILE>.txt'
-dbFileName = '<DATA BASE FILE FOR IMAGES>.csv'
-brand = '<BRAND NAME>'
-sellerName = '<SELLER NAME>'
-websiteURL = '<WEBSITE URL>'
-uploadURL = websiteURL + '/upload/'
+inputFileName = 'funk120415.xml'
+outputFileName = 'funk120415.txt'
+dbFileName = 'funkierb_1C.csv'
+brand = 'Funkier Bike'
+sellerName = 'Funkier Bike USA'
+websiteURL = 'https://www.funkierbikeusa.com'
+uploadURL = websiteURL + '/wp-content/uploads/'
 
 
 oFile = open(outputFileName,'w',newline='') 
@@ -46,12 +44,14 @@ for item in channel.findall('item'):
     # Get URL to Item
     link = item.find('link').text
     
+    # Change to https if http
+    link = re.sub('http://','https://',link)    
+    
     # Get ID
     postID = item.find(etree.QName(item.nsmap['wp'],'post_id')).text
     
     # Get Description    
     description = item.find(etree.QName(item.nsmap['excerpt'] , 'encoded')).text.strip()
-    
     
     # Remove HTML tags 
     description = re.sub('<[^<]+?>', '', description)   
@@ -63,9 +63,9 @@ for item in channel.findall('item'):
     description = description.strip().encode("ascii").decode("utf-8")
     
 
+    # If description starts with ' ' remove it
+    description = description.strip();
     
-    if (len(description)) and (description[0] == '.'):
-        description = description[1:]
     if not (len(description)):
         description = 'No description available.';
 
